@@ -33,7 +33,9 @@ jobs:
           sudo apt install -y cmake ninja-build
 
       - name: Install dependencies via Conan
-        run: conan install . --build=missing
+        run: |
+          conan profile detect
+          conan install . --build=missing
 
       - name: Install dependencies via Poetry
         run: poetry install
