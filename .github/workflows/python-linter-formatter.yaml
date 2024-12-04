@@ -23,7 +23,7 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install --upgrade pipx
-          pipx install make poetry mypy ruff 
+          pipx install poetry mypy ruff 
       
       - name: Run linter and formatter checks
         run: |

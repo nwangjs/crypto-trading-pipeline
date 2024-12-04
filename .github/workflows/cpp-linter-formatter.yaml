@@ -23,7 +23,7 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install --upgrade pipx
-          pipx install make cmake ninja conan poetry clang-tidy clang-format
+          pipx install cmake ninja conan poetry clang-tidy clang-format
 
       - name: Run conan profile detect
         run: |
