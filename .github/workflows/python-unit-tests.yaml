@@ -21,11 +21,11 @@ jobs:
       
       - name: Install Conan
         run: |
-          python -m pip install --upgrade pip
-          pip install conan
+          python -m pip install --upgrade pipx
+          pipx install conan
       
       - name: Install Poetry
-        run: curl -sSL https://install.python-poetry.org | python3 -
+        run: pipx install poetry 
 
       - name: Install CMake and Ninja
         run: |
@@ -43,10 +43,11 @@ jobs:
       - name: Build project
         run: |
           cd build && cmake .. -DCMAKE_TOOLCHAIN_FILE=Release/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release -G Ninja
-          cd build && cmake --build .
+          cmake --build .
+          cd ..
           cp -f build/*.so src/pysrc
 
       - name: Run tests with Pytest
         run: |
-          cd build && ./intern_tests
+          build/intern_tests
           poetry run pytest src/pysrc/test
