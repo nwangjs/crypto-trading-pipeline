@@ -31,7 +31,7 @@ lint_format_check_cpp: build
 	find $(CPP_SRC) -name "*.cpp" -or -name "*.hpp" | xargs clang-tidy -p=build
 	find $(CPP_SRC) -name "*.cpp" -or -name '*.hpp' | xargs clang-format --dry-run --Werror
 
-lint_format_check_python:
+lint_format_check_python: install_python
 	poetry run mypy $(PY_SRC)
 	poetry run ruff check $(PY_SRC)
 	poetry run ruff format --check $(PY_SRC)
