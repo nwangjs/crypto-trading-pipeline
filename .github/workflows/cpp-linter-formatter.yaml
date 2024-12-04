@@ -1,0 +1,31 @@
+name: cpp-linter-formatter
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install clang-tidy and clang-format
+        run: |
+          sudo apt update
+          sudo apt install -y clang-tidy clang-format
+
+      - name: Generate compile_commands.json file
+        run: |
+          mkdir build
+          cd build
+          cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=YES ..
+
+      - name: Run linter and formatter checks
+        run: |
+          find src/cppsrc -name "*.cpp" -or -name "*.hpp" | xargs clang-tidy -p=build
+          find src/cppsrc -name "*.cpp" -or -name '*.hpp' | xargs clang-format --dry-run --Werror
