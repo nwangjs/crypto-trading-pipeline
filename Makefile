@@ -1,22 +1,24 @@
-.PHONY: build install test_cpp test_python clean lint_format_check_cpp lint_format_check_python format
+.PHONY: build install_cpp install_python test_cpp test_python clean lint_format_check_cpp lint_format_check_python format
 
 RELEASE_TYPE = Release
 PY_SRC = src/pysrc
 CPP_SRC = src/cppsrc
 
-build: install
+build: install_cpp
 	cd build && cmake .. -DCMAKE_TOOLCHAIN_FILE=$(RELEASE_TYPE)/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=$(RELEASE_TYPE) -G Ninja
 	cd build && cmake --build .
 	@cp -f build/*.so $(PY_SRC)
 
-install:
+install_cpp:
 	conan install . --build=missing
+
+install_python:
 	poetry install
 
 test_cpp: build
 	@cd build && ./intern_tests
 
-test_python: build
+test_python: build install_python
 	@poetry run pytest $(PY_SRC)/test
 
 clean:
