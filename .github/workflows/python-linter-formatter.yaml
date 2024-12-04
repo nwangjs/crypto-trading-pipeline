@@ -28,13 +28,8 @@ jobs:
       - name: Install Ruff
         run: pipx install ruff
 
-      - name: Run linter
+      - name: Run linter and formatter checks
         run: |
           poetry run mypy src/pysrc
           poetry run ruff check src/pysrc
           poetry run ruff format --check src/pysrc
-      
-      - name: Run formatter
-        run: |
-          poetry run ruff format src/pysrc
-          poetry run ruff check --fix src/pysrc
