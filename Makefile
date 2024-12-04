@@ -1,4 +1,4 @@
-.PHONY: build install test clean lint format
+.PHONY: build install test_cpp test_python clean lint_format_check_cpp lint_format_check_python format
 
 RELEASE_TYPE = Release
 PY_SRC = src/pysrc
@@ -13,15 +13,21 @@ install:
 	conan install . --build=missing
 	poetry install
 
-test: build
+test_cpp: build
 	@cd build && ./intern_tests
+
+test_python: build
 	@poetry run pytest $(PY_SRC)/test
 
 clean:
 	@rm -rf build
 	@rm -f $(PY_SRC)/*.so
 
-lint:
+lint_format_check_cpp: build
+	find $(CPP_SRC) -name "*.cpp" -or -name "*.hpp" | xargs clang-tidy -p=build
+	find $(CPP_SRC) -name "*.cpp" -or -name '*.hpp' | xargs clang-format --dry-run --Werror
+
+lint_format_check_python:
 	poetry run mypy $(PY_SRC)
 	poetry run ruff check $(PY_SRC)
 	poetry run ruff format --check $(PY_SRC)

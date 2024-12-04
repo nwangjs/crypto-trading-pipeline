@@ -14,22 +14,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.12-dev environment
+      - name: Set up Python 3.12 environment
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12-dev'
+          python-version: '3.12'
+
+      - name: Install tools
+        run: |
+          pip install --upgrade pip
+          pip install --upgrade pipx
+          pipx install make poetry mypy ruff 
       
-      - name: Install Poetry
-        run: pipx install poetry 
-
-      - name: Install Mypy
-        run: pipx install mypy
-
-      - name: Install Ruff
-        run: pipx install ruff
-
       - name: Run linter and formatter checks
         run: |
-          poetry run mypy src/pysrc
-          poetry run ruff check src/pysrc
-          poetry run ruff format --check src/pysrc
+          make lint_format_check_python

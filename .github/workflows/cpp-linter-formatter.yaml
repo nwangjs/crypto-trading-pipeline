@@ -14,51 +14,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.12-dev environment
+      - name: Set up Python 3.12 environment
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12-dev'
+          python-version: '3.12'
       
-      - name: Install Conan
+      - name: Install tools
         run: |
-          python -m pip install --upgrade pipx
-          pipx install conan
-      
-      - name: Install Poetry
-        run: pipx install poetry 
+          pip install --upgrade pip
+          pip install --upgrade pipx
+          pipx install make cmake ninja conan poetry clang-tidy clang-format
 
-      - name: Install CMake and Ninja
-        run: |
-          sudo apt update
-          sudo apt install -y cmake ninja-build
-
-      - name: Install dependencies via Conan
+      - name: Run conan profile detect
         run: |
           conan profile detect
-          conan install . --build=missing
-
-      - name: Install dependencies via Poetry
-        run: poetry install
-
-      - name: Install clang-tidy and clang-format
-        run: |
-          sudo apt update
-          sudo apt install -y clang-tidy clang-format
-
-      - name: Build project
-        run: |
-          cd build && cmake .. -DCMAKE_TOOLCHAIN_FILE=Release/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release -G Ninja
-          cmake --build .
-          cd ..
-          cp -f build/*.so src/pysrc
-
-      - name: Generate compile_commands.json file
-        run: |
-          cd build
-          cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=YES ..
-          cd ..
 
       - name: Run linter and formatter checks
         run: |
-          find src/cppsrc -name "*.cpp" -or -name "*.hpp" | xargs clang-tidy -p=build
-          find src/cppsrc -name "*.cpp" -or -name '*.hpp' | xargs clang-format --dry-run --Werror
+          make lint_format_check_cpp
