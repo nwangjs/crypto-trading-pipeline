@@ -1,4 +1,4 @@
-.PHONY: build build_cpp install_cpp install_python test_cpp test_python clean lint_format_check_cpp lint_format_check_python format
+.PHONY: build build_cpp install_cpp install_python test_cpp test_python test_integration clean lint_format_check_cpp lint_format_check_python format
 
 RELEASE_TYPE = Release
 PY_SRC = src/pysrc
@@ -21,7 +21,10 @@ test_cpp: build_cpp
 	@cd build && ./intern_tests
 
 test_python: build
-	@poetry run pytest $(PY_SRC)/test
+	@poetry run pytest $(PY_SRC)/test/unit
+
+test_integration: build
+	@poetry run pytest $(PY_SRC)/test/integration
 
 clean:
 	@rm -rf build
