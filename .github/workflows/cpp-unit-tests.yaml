@@ -1,0 +1,52 @@
+name: cpp-unit-tests
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12-dev environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12-dev'
+      
+      - name: Install Conan
+        run: |
+          python -m pip install --upgrade pipx
+          pipx install conan
+      
+      - name: Install Poetry
+        run: pipx install poetry 
+
+      - name: Install CMake and Ninja
+        run: |
+          sudo apt update
+          sudo apt install -y cmake ninja-build
+
+      - name: Install dependencies via Conan
+        run: |
+          conan profile detect
+          conan install . --build=missing
+
+      - name: Install dependencies via Poetry
+        run: poetry install
+
+      - name: Build project
+        run: |
+          cd build && cmake .. -DCMAKE_TOOLCHAIN_FILE=Release/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release -G Ninja
+          cmake --build .
+          cd ..
+          cp -f build/*.so src/pysrc
+
+      - name: Run tests 
+        run: |
+          build/intern_tests
