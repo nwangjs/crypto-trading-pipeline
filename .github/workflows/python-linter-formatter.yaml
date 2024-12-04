@@ -1,0 +1,41 @@
+name: python-linter-formatter
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12-dev environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12-dev'
+      
+      - name: Install Poetry
+        run: pipx install poetry 
+
+      - name: Install Mypy
+        run: pipx install mypy
+
+      - name: Install Ruff
+        run: pipx install ruff
+
+      - name: Run linter
+        run: |
+          poetry run mypy src/pysrc
+          poetry run ruff check src/pysrc
+          poetry run ruff format --check src/pysrc
+      
+      - name: Run formatter
+        run: |
+          	find src/cppsrc -name '*.cpp' -o -name '*.hpp' | xargs clang-format -i
+	          poetry run ruff format src/pysrc
+	          poetry run ruff check --fix src/pysrc
