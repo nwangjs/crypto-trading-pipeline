@@ -45,6 +45,13 @@ jobs:
           sudo apt update
           sudo apt install -y clang-tidy clang-format
 
+      - name: Build project
+        run: |
+          cd build && cmake .. -DCMAKE_TOOLCHAIN_FILE=Release/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release -G Ninja
+          cmake --build .
+          cd ..
+          cp -f build/*.so src/pysrc
+
       - name: Generate compile_commands.json file
         run: |
           cd build
