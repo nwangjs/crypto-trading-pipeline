@@ -25,6 +25,6 @@ jobs:
           pip install --upgrade pipx
           pipx install cmake ninja conan poetry clang-tidy clang-format
 
-      - name: Run tests with Pytest
+      - name: Run tests
         run: |
-          poetry run pytest src/pysrc/test
+          make test_python 
