@@ -1,4 +1,5 @@
 import sys
+from typing import Any
 import requests
 import json
 
@@ -7,7 +8,7 @@ BASE_URL = "https://api.gemini.com/v1/trades/"
 
 class DataClient:
     def __init__(self) -> None:
-        self.data = {}
+        self.data: dict[str, Any] = {}
 
     def _query_api(self, symbol: str) -> None:
         try:
