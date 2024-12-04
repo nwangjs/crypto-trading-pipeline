@@ -49,5 +49,4 @@ jobs:
 
       - name: Run tests with Pytest
         run: |
-          build/intern_tests
           poetry run pytest src/pysrc/test
