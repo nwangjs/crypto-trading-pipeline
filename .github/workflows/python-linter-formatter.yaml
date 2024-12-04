@@ -36,6 +36,5 @@ jobs:
       
       - name: Run formatter
         run: |
-          find src/cppsrc -name '*.cpp' -o -name '*.hpp' | xargs clang-format -i
           poetry run ruff format src/pysrc
           poetry run ruff check --fix src/pysrc
