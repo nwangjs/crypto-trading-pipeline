@@ -31,4 +31,4 @@ jobs:
 
       - name: Run tests
         run: |
-          make integration_test
+          make test_integration
