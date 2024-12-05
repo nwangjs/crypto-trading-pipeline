@@ -7,15 +7,17 @@ def test__parse_message() -> None:
     client = DataClient()
 
     test_symbol = "btcusd"
-    test_trade_history = {
-        "timestamp": 1,
-        "timestampms": 1000,
-        "tid": 5,
-        "price": "90000.00",
-        "amount": "0.05",
-        "exchange": "gemini",
-        "type": "buy",
-    }
+    test_trade_history = [
+        {
+            "timestamp": 1,
+            "timestampms": 1000,
+            "tid": 5,
+            "price": "90000.00",
+            "amount": "0.05",
+            "exchange": "gemini",
+            "type": "buy",
+        }
+    ]
 
     client._parse_message(test_symbol, test_trade_history)
 
@@ -27,15 +29,17 @@ def test_get_data() -> None:
     client = DataClient()
 
     test_symbol = "btcusd"
-    test_trade_history = {
-        "timestamp": 1,
-        "timestampms": 1000,
-        "tid": 5,
-        "price": "90000.00",
-        "amount": "0.05",
-        "exchange": "gemini",
-        "type": "buy",
-    }
+    test_trade_history = [
+        {
+            "timestamp": 1,
+            "timestampms": 1000,
+            "tid": 5,
+            "price": "90000.00",
+            "amount": "0.05",
+            "exchange": "gemini",
+            "type": "buy",
+        }
+    ]
 
     client._query_api = MagicMock(
         side_effect=lambda symbol: client._parse_message(symbol, test_trade_history)
