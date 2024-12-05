@@ -8,7 +8,7 @@ BASE_URL = "https://api.gemini.com/v1/trades/"
 
 class DataClient:
     def __init__(self) -> None:
-        self.data: dict[str, Any] = {}
+        self.data: dict[str, list[dict[str, Any]]] = {}
 
     def _query_api(self, symbol: str) -> None:
         try:
@@ -18,9 +18,9 @@ class DataClient:
         except Exception as e:
             print(f"API Query Failed: {e}", file=sys.stderr)
 
-    def _parse_message(self, symbol: str, trade_history: dict) -> None:
+    def _parse_message(self, symbol: str, trade_history: list[dict[str, Any]]) -> None:
         self.data[symbol] = trade_history
 
-    def get_data(self, symbol: str) -> None:
+    def get_data(self, symbol: str) -> list[dict[str, Any]] | None:
         self._query_api(symbol)
-        print(self.data.get(symbol))
+        return self.data.get(symbol)

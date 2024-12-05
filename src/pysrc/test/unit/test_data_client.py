@@ -45,7 +45,4 @@ def test_get_data() -> None:
         side_effect=lambda symbol: client._parse_message(symbol, test_trade_history)
     )
 
-    client.get_data(test_symbol)
-
-    assert test_symbol in client.data
-    assert client.data[test_symbol] == test_trade_history
+    assert client.get_data(test_symbol) == test_trade_history

@@ -7,7 +7,7 @@ def test_integration() -> None:
 
     test_symbol = "btcusd"
 
-    client.get_data(test_symbol)
+    test_data = client.get_data(test_symbol)
 
     assert test_symbol in client.data
 
@@ -21,5 +21,5 @@ def test_integration() -> None:
         "type",
     }
 
-    for trade in client.data[test_symbol]:
+    for trade in test_data:
         assert expected_keys.issubset(trade.keys())
