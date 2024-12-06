@@ -2,7 +2,7 @@ import pytest
 from pysrc.data_client import DataClient
 
 
-def test_integration() -> None:
+def test_Gemini_API_request() -> None:
     client = DataClient()
 
     test_symbol = "btcusd"

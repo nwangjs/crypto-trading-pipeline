@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 from pysrc.data_client import DataClient
 
 
-def test__parse_message() -> None:
+def test_parse_message() -> None:
     client = DataClient()
 
     test_symbol = "btcusd"
