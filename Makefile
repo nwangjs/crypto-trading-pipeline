@@ -1,27 +1,40 @@
-.PHONY: build install test clean lint format
+.PHONY: build build_cpp install_cpp install_python test_cpp test_python test_integration clean lint_format_check_cpp lint_format_check_python format
 
 RELEASE_TYPE = Release
 PY_SRC = src/pysrc
 CPP_SRC = src/cppsrc
 
-build: install
+build: build_cpp install_python
+
+build_cpp: install_cpp
 	cd build && cmake .. -DCMAKE_TOOLCHAIN_FILE=$(RELEASE_TYPE)/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=$(RELEASE_TYPE) -G Ninja
 	cd build && cmake --build .
 	@cp -f build/*.so $(PY_SRC)
 
-install:
+install_cpp:
 	conan install . --build=missing
+
+install_python:
 	poetry install
 
-test: build
+test_cpp: build_cpp
 	@cd build && ./intern_tests
-	@poetry run pytest $(PY_SRC)/test
+
+test_python: build
+	@poetry run pytest $(PY_SRC)/test/unit
+
+test_integration: build
+	@poetry run pytest $(PY_SRC)/test/integration
 
 clean:
 	@rm -rf build
 	@rm -f $(PY_SRC)/*.so
 
-lint:
+lint_format_check_cpp: build
+	find $(CPP_SRC) -name "*.cpp" -or -name "*.hpp" | xargs clang-tidy -p=build
+	find $(CPP_SRC) -name "*.cpp" -or -name '*.hpp' | xargs clang-format --dry-run --Werror
+
+lint_format_check_python: install_python
 	poetry run mypy $(PY_SRC)
 	poetry run ruff check $(PY_SRC)
 	poetry run ruff format --check $(PY_SRC)
