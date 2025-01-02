@@ -11,7 +11,7 @@ class FiveTickVolumeFeature : public BaseFeature
     int last_five_volume = 0;
 
   public:
-    float compute_feature(std::vector<std::tuple<float, float, bool>> data)
+    float compute_feature(std::vector<std::tuple<float, float, bool>> data) override
     {
         int curr_tick_volume =
           std::accumulate(data.begin(), data.end(), 0, [](int sum, const std::tuple<float, float, bool> &t) {
@@ -28,8 +28,6 @@ class FiveTickVolumeFeature : public BaseFeature
 
         return last_five_volume;
     }
-
-    virtual ~FiveTickVolumeFeature() {}
 };
 
 

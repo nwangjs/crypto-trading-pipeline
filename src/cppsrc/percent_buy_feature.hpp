@@ -6,14 +6,12 @@ namespace intproj {
 class PercentBuyFeature : public BaseFeature
 {
   public:
-    float compute_feature(std::vector<std::tuple<float, float, bool>> data)
+    float compute_feature(std::vector<std::tuple<float, float, bool>> data) override
     {
-        return (float)std::count_if(data.begin(), data.end(), [](const std::tuple<float, float, bool> &t) {
+        return static_cast<float>(std::count_if(data.begin(), data.end(), [](const std::tuple<float, float, bool> &t) {
             return std::get<2>(t);
-        }) / data.size();
+        })) / data.size();
     }
-
-    virtual ~PercentBuyFeature() {}
 };
 
 
