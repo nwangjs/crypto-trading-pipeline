@@ -10,5 +10,5 @@ def test_buffer() -> None:
         assert model.predict() is None
 
     for i in range(10):
-        model.add_tick([(1, 1, True)])
+        model.add_tick([(i, 1, True)])
         assert model.predict() is not None
