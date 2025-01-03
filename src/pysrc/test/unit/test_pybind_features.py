@@ -2,16 +2,20 @@ import pytest
 from pysrc import intern
 
 
-def test_pybind_features() -> None:
+def test_NTradesFeature() -> None:
     ntf = intern.NTradesFeature()
     assert ntf.compute_feature([(1, 1, False)]) == 1
     assert ntf.compute_feature([(2, 1, False), (2, 2, True)]) == 2
 
+
+def test_PercentBuyFeature() -> None:
     ptf = intern.PercentBuyFeature()
     assert abs(ptf.compute_feature([(1, 1, False)]) - 0) < 1e-2
     assert abs(ptf.compute_feature([(1, 1, False), (1, 1, True)]) - 0.5) < 1e-2
     assert abs(ptf.compute_feature([(1, 1, True)]) - 1) < 1e-2
 
+
+def test_PercentSellFeature() -> None:
     psf = intern.PercentSellFeature()
     assert abs(psf.compute_feature([(1, 1, False)]) - 1) < 1e-2
     assert abs(psf.compute_feature([(1, 1, False), (1, 1, True)]) - 0.5) < 1e-2
@@ -20,6 +24,8 @@ def test_pybind_features() -> None:
         < 1e-2
     )
 
+
+def test_FiveTickVolumnFeature() -> None:
     vf = intern.FiveTickVolumeFeature()
     assert vf.compute_feature([(2, 1, False)]) == 1
     assert vf.compute_feature([(1, 1, False)]) == 2
