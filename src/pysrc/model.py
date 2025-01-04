@@ -14,6 +14,10 @@ class LassoModel:
         self.ptf = intern.PercentBuyFeature()
         self.psf = intern.PercentSellFeature()
         self.vf = intern.FiveTickVolumeFeature()
+        with open("src/pysrc/targets.csv", "w") as f:
+            f.write("target\n")
+        with open("src/pysrc/predictions.csv", "w") as f:
+            f.write("prediction\n")
 
     def add_tick(self, tick: list[tuple[float, float, bool]]) -> None:
         if self.curr_tick_features is not None:
@@ -36,12 +40,15 @@ class LassoModel:
 
         if self.curr_tick_midprice is not None:
             self.Y.append([midprice - self.curr_tick_midprice])
+            prev_tick_midprice = self.curr_tick_midprice
 
         self.curr_tick_midprice = midprice
 
         if len(self.X) > 10:
             self.X.pop(0)
             self.Y.pop(0)
+            with open("src/pysrc/targets.csv", "a") as f:
+                f.write(f"{self.curr_tick_midprice - prev_tick_midprice}\n")
 
     def predict(self) -> Any:
         if len(self.X) < 10:
@@ -49,4 +56,9 @@ class LassoModel:
 
         self.reg.fit(self.X, self.Y)
 
-        return self.reg.predict([self.curr_tick_features])
+        prediction = self.reg.predict([self.curr_tick_features])
+
+        with open("src/pysrc/predictions.csv", "a") as f:
+            f.write(f"{prediction[0]}\n")
+
+        return prediction[0]
