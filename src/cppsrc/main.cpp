@@ -1,3 +1,4 @@
+#include "data_client.hpp"
 #include "five_tick_volume_feature.hpp"
 #include "n_trades_feature.hpp"
 #include "percent_buy_feature.hpp"
@@ -40,4 +41,21 @@ PYBIND11_MODULE(intern, m)
     py::class_<FiveTickVolumeFeature, BaseFeature>(m, "FiveTickVolumeFeature")
       .def(py::init<>())
       .def("compute_feature", &FiveTickVolumeFeature::compute_feature);
+
+    py::class_<trade>(m, "Trade")
+      .def(py::init<long long, long long, float, float, std::string, std::string>(),
+        py::arg("timestamp"),
+        py::arg("timestampms"),
+        py::arg("price"),
+        py::arg("amount"),
+        py::arg("exchange"),
+        py::arg("type"))
+      .def_readwrite("timestamp", &trade::timestamp)
+      .def_readwrite("timestampms", &trade::timestampms)
+      .def_readwrite("price", &trade::price)
+      .def_readwrite("amount", &trade::amount)
+      .def_readwrite("exchange", &trade::exchange)
+      .def_readwrite("type", &trade::type);
+
+    py::class_<DataClient>(m, "DataClient").def(py::init<>()).def("get_data", &DataClient::get_data, py::arg("symbol"));
 }
