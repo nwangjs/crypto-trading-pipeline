@@ -37,4 +37,7 @@ target_link_libraries(intern_tests PRIVATE cpr::cpr)
 target_link_libraries(intern_tests PRIVATE nlohmann_json::nlohmann_json)
 
 pybind11_add_module(intern src/cppsrc/main.cpp)
+target_link_libraries(intern PRIVATE cpr::cpr)
+target_link_libraries(intern PRIVATE nlohmann_json::nlohmann_json)
+
 install(TARGETS intern DESTINATION intern_project)
