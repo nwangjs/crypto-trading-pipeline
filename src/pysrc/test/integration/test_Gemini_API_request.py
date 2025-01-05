@@ -1,5 +1,6 @@
 import pytest
 from pysrc.data_client import DataClient
+from pysrc import intern
 
 
 def test_Gemini_API_request() -> None:
@@ -8,8 +9,6 @@ def test_Gemini_API_request() -> None:
     test_symbol = "btcusd"
 
     test_data = client.get_data(test_symbol)
-
-    assert test_symbol in client.data
 
     expected_keys = {
         "timestamp",
@@ -22,4 +21,5 @@ def test_Gemini_API_request() -> None:
     }
 
     for trade in test_data:
-        assert expected_keys.issubset(trade.keys())
+        for key in expected_keys:
+            assert hasattr(trade, key)

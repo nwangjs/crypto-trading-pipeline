@@ -43,15 +43,17 @@ PYBIND11_MODULE(intern, m)
       .def("compute_feature", &FiveTickVolumeFeature::compute_feature);
 
     py::class_<trade>(m, "Trade")
-      .def(py::init<long long, long long, float, float, std::string, std::string>(),
+      .def(py::init<long long, long long, long long, float, float, std::string, std::string>(),
         py::arg("timestamp"),
         py::arg("timestampms"),
+        py::arg("tid"),
         py::arg("price"),
         py::arg("amount"),
         py::arg("exchange"),
         py::arg("type"))
       .def_readwrite("timestamp", &trade::timestamp)
       .def_readwrite("timestampms", &trade::timestampms)
+      .def_readwrite("tid", &trade::tid)
       .def_readwrite("price", &trade::price)
       .def_readwrite("amount", &trade::amount)
       .def_readwrite("exchange", &trade::exchange)

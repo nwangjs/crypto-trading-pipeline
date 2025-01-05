@@ -13,13 +13,21 @@ struct trade
 {
     long long timestamp;
     long long timestampms;
+    long long tid;
     float price;
     float amount;
     std::string exchange;
     std::string type;
 
-    trade(long long timestamp, long long timestampms, float price, float amount, std::string exchange, std::string type)
-      : timestamp(timestamp), timestampms(timestampms), price(price), amount(amount), exchange(exchange), type(type)
+    trade(long long timestamp,
+      long long timestampms,
+      long long tid,
+      float price,
+      float amount,
+      std::string exchange,
+      std::string type)
+      : timestamp(timestamp), timestampms(timestampms), tid(tid), price(price), amount(amount), exchange(exchange),
+        type(type)
     {}
 };
 
@@ -27,38 +35,41 @@ class DataClient
 {
   private:
     std::unordered_map<std::string, std::vector<trade>> data;
-    long long last_timestampms = 0;
+    long long last_tid = 0;
 
-    void _query_api(const std::string symbol)
+    int _query_api(const std::string symbol)
     {
         try {
             std::string url = BASE_URL + symbol;
             cpr::Response response;
 
-            if (last_timestampms) {
-                response =
-                  cpr::Get(cpr::Url{ url }, cpr::Parameters{ { "timestamp", std::to_string(last_timestampms) } });
-            } else {
-                response = cpr::Get(cpr::Url{ url });
-            }
+            response = cpr::Get(
+              cpr::Url{ url }, cpr::Parameters{ { "since_tid", std::to_string(last_tid) } }, cpr::VerifySsl{ false });
 
             if (response.status_code == 200) {
                 auto trade_history = nlohmann::json::parse(response.text);
+                _parse_message(symbol, trade_history);
 
                 if (!trade_history.empty()) {
-                    last_timestampms = trade_history[0]["timestampms"];
+                    last_tid = static_cast<long long>(trade_history[0]["tid"]);
                 } else {
                     std::cerr << "No trades retrieved from API Query" << std::endl;
+                    return 1;
                 }
 
-                _parse_message(symbol, trade_history);
             } else {
-                std::cerr << "API Query response code is not 200 OK" << std::endl;
+                std::cerr << "API Query failed with status code: " << response.status_code << std::endl;
+                std::cerr << "Response text: " << response.text << std::endl;
+                std::cerr << "Error details: " << response.error.message << std::endl;
+                return 1;
             }
 
         } catch (const std::exception &e) {
             std::cerr << "API Query Failed: " << e.what() << std::endl;
+            return 1;
         }
+
+        return 0;
     }
 
     void _parse_message(const std::string symbol, const nlohmann::json &trade_history)
@@ -68,8 +79,9 @@ class DataClient
         for (const auto &entry : trade_history) {
             trade t(entry["timestamp"],
               entry["timestampms"],
-              entry["price"],
-              entry["amount"],
+              entry["tid"],
+              std::stof(entry["price"].get<std::string>()),
+              std::stof(entry["amount"].get<std::string>()),
               entry["exchange"],
               entry["type"]);
             trades.push_back(t);
@@ -83,7 +95,8 @@ class DataClient
 
     std::vector<trade> get_data(const std::string symbol)
     {
-        _query_api(symbol);
+        if (_query_api(symbol)) { return {}; }
+
         return data[symbol];
     }
 };
