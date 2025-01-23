@@ -1,1 +1,1 @@
-# intern-project
+Crypto Trading Pipeline
