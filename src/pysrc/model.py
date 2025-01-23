@@ -20,6 +20,9 @@ class LassoModel:
             f.write("prediction\n")
 
     def add_tick(self, tick: list[tuple[float, float, bool]]) -> None:
+        if len(tick) == 0:
+            return
+
         if self.curr_tick_features is not None:
             self.X.append(self.curr_tick_features)
 

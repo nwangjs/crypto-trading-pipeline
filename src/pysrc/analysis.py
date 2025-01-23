@@ -11,28 +11,31 @@ test_symbol = "btcusd"
 time_sleep_sec = 10
 
 for i in tqdm(range(11)):
-    test_data = client.get_data(test_symbol)
-    parsed_data = [
-        (float(trade["price"]), float(trade["amount"]), trade["type"] == "buy")
-        for trade in test_data
-    ]
-    model.add_tick(parsed_data)
-    time.sleep(time_sleep_sec)
+    while True:
+        test_data = client.get_data(test_symbol)
+        parsed_data = [
+            (trade.price, trade.amount, trade.type == "buy") for trade in test_data
+        ]
+        model.add_tick(parsed_data)
+        time.sleep(time_sleep_sec)
+        if len(parsed_data) != 0:
+            break
 
 num_predictions = 10
 
 for i in tqdm(range(num_predictions)):
     model.predict()
 
-    test_data = client.get_data(test_symbol)
-    parsed_data = [
-        (float(trade["price"]), float(trade["amount"]), trade["type"] == "buy")
-        for trade in test_data
-    ]
-    model.add_tick(parsed_data)
+    while True:
+        test_data = client.get_data(test_symbol)
+        parsed_data = [
+            (trade.price, trade.amount, trade.type == "buy") for trade in test_data
+        ]
+        model.add_tick(parsed_data)
 
-    time.sleep(time_sleep_sec)
-
+        time.sleep(time_sleep_sec)
+        if len(parsed_data) != 0:
+            break
 
 targets = pd.read_csv("src/pysrc/targets.csv")
 predictions = pd.read_csv("src/pysrc/predictions.csv")
